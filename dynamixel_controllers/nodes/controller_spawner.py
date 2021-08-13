@@ -42,6 +42,7 @@ __maintainer__ = 'Antons Rebguns'
 __email__ = 'anton@email.arizona.edu'
 
 
+from struct import pack
 import sys
 import os
 from optparse import OptionParser
@@ -67,27 +68,28 @@ def manage_controller(controller_name, port_namespace, controller_type, command,
     except Exception as e:
         rospy.logerr('[%s]: %s' % (controller_name, e))
         sys.exit(1)
-        
+
     if command.lower() == 'start':
         try:
             response = start(port_namespace, package_path, module_name, class_name, controller_name, deps)
             if response.success: rospy.loginfo(response.reason)
-            else: rospy.logerr(response.reason)
-        except rospy.ServiceException, e:
+            else: 
+                rospy.logerr(response.reason)
+        except rospy.ServiceException as e:
             rospy.logerr('Service call failed: %s' % e)
     elif command.lower() == 'stop':
         try:
             response = stop(controller_name)
             if response.success: rospy.loginfo(response.reason)
             else: rospy.logerr(response.reason)
-        except rospy.ServiceException, e:
+        except rospy.ServiceException as e:
             rospy.logerr('Service call failed: %s' % e)
     elif command.lower() == 'restart':
         try:
             response = restart(port_namespace, package_path, module_name, class_name, controller_name, deps)
             if response.success: rospy.loginfo(response.reason)
             else: rospy.logerr(response.reason)
-        except rospy.ServiceException, e:
+        except rospy.ServiceException as e:
             rospy.logerr('Service call failed: %s' % e)
     else:
         rospy.logerr('Invalid command.')
@@ -110,7 +112,7 @@ if __name__ == '__main__':
         
         if len(args) < 1:
             parser.error('specify at least one controller name')
-            
+              
         manager_namespace = options.manager
         port_namespace = options.port
         controller_type = options.type
@@ -135,7 +137,6 @@ if __name__ == '__main__':
         restart_controller = rospy.ServiceProxy(restart_service_name, RestartController)
         
         rospy.loginfo('%s controller_spawner: All services are up, spawning controllers...' % port_namespace)
-        
         if controller_type == 'simple':
             for controller_name in joint_controllers:
                 manage_controller(controller_name, port_namespace, controller_type, command, [], start_controller, stop_controller, restart_controller)

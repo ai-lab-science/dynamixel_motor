@@ -48,7 +48,12 @@ from array import array
 from binascii import b2a_hex
 from threading import Lock
 
-from dynamixel_const import *
+from dynamixel_driver.dynamixel_const import *
+#SEED ROBOTICS
+# Fine tuning the reply wait time.
+# Default is 0.0013
+# If you have communication or latency issues, we recommend, setting this to 0.005
+REPLY_WAIT_TIME_SECS = 0.0013 # 0.005
 
 exception = None
 
@@ -95,10 +100,10 @@ class DynamixelIO(object):
 
         try:
             data.extend(self.ser.read(4))
-            if not data[0:2] == ['\xff', '\xff']: raise Exception('Wrong packet prefix %s' % data[0:2])
-            data.extend(self.ser.read(ord(data[3])))
-            data = array('B', ''.join(data)).tolist() # [int(b2a_hex(byte), 16) for byte in data]
-        except Exception, e:
+            if not data[0:2] == [255,255]: raise Exception('Wrong packet prefix %s' % data[0:2])
+            data.extend(self.ser.read(data[3]))
+            #data = array('B', ''.join(data)).tolist() # [int(b2a_hex(byte), 16) for byte in data]
+        except Exception as e:
             raise DroppedPacketError('Invalid response received from motor %d. %s' % (servo_id, e))
 
         # verify checksum
@@ -133,7 +138,7 @@ class DynamixelIO(object):
 
             # wait for response packet from the motor
             timestamp = time.time()
-            time.sleep(0.0013)#0.00235)
+            time.sleep(REPLY_WAIT_TIME_SECS) # SEED ROBOTICS
 
             # read response
             data = self.__read_response(servo_id)
@@ -172,7 +177,7 @@ class DynamixelIO(object):
 
             # wait for response packet from the motor
             timestamp = time.time()
-            time.sleep(0.0013)
+            time.sleep(REPLY_WAIT_TIME_SECS) # SEED ROBOTICS
 
             # read response
             data = self.__read_response(servo_id)
@@ -235,13 +240,13 @@ class DynamixelIO(object):
 
             # wait for response packet from the motor
             timestamp = time.time()
-            time.sleep(0.0013)
+            time.sleep(REPLY_WAIT_TIME_SECS) # SEED ROBOTICS
 
             # read response
             try:
                 response = self.__read_response(servo_id)
                 response.append(timestamp)
-            except Exception, e:
+            except Exception as e:
                 response = []
 
         if response:

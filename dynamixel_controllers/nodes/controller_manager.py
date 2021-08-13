@@ -43,6 +43,7 @@ __maintainer__ = 'Antons Rebguns'
 __email__ = 'anton@email.arizona.edu'
 
 
+from struct import pack
 from threading import Thread, Lock
 
 import sys
@@ -77,7 +78,6 @@ class ControllerManager:
 
         manager_namespace = rospy.get_param('~namespace')
         serial_ports = rospy.get_param('~serial_ports')
-        
         for port_namespace,port_config in serial_ports.items():
             port_name = port_config['port_name']
             baud_rate = port_config['baud_rate']
@@ -201,19 +201,20 @@ class ControllerManager:
             
         try:
             if module_name not in sys.modules:
+                print("DSLFKSDJFKLJ")
                 # import if module not previously imported
-                package_module = __import__(package_path, globals(), locals(), [module_name], -1)
+                package_module = __import__(package_path, globals(), locals(), [module_name], 0)
             else:
                 # reload module if previously imported
                 package_module = reload(sys.modules[package_path])
             controller_module = getattr(package_module, module_name)
-        except ImportError, ie:
+        except ImportError as ie:
             self.start_controller_lock.release()
             return StartControllerResponse(False, 'Cannot find controller module. Unable to start controller %s\n%s' % (module_name, str(ie)))
-        except SyntaxError, se:
+        except SyntaxError as se:
             self.start_controller_lock.release()
             return StartControllerResponse(False, 'Syntax error in controller module. Unable to start controller %s\n%s' % (module_name, str(se)))
-        except Exception, e:
+        except Exception as e:
             self.start_controller_lock.release()
             return StartControllerResponse(False, 'Unknown error has occured. Unable to start controller %s\n%s' % (module_name, str(e)))
         

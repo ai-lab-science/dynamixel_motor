@@ -53,7 +53,7 @@ import roslib
 roslib.load_manifest('dynamixel_driver')
 
 import rospy
-import dynamixel_io
+from dynamixel_driver import dynamixel_io
 from dynamixel_driver.dynamixel_const import *
 
 from diagnostic_msgs.msg import DiagnosticArray
@@ -98,7 +98,7 @@ class SerialProxy():
         try:
             self.dxl_io = dynamixel_io.DynamixelIO(self.port_name, self.baud_rate, self.readback_echo)
             self.__find_motors()
-        except dynamixel_io.SerialOpenError, e:
+        except dynamixel_io.SerialOpenError as e:
             rospy.logfatal(e.message)
             sys.exit(1)
             
@@ -115,7 +115,22 @@ class SerialProxy():
         Some of these paramters are used in joint controller implementation.
         """
         angles = self.dxl_io.get_angle_limits(motor_id)
-        voltage = self.dxl_io.get_voltage(motor_id)
+        # BEGIN SEED ROBOTICS ADDITIONS
+        if (model_number == 400 or # Seed Robotics Ares board
+           model_number == 405 or # Seed Robotics Eros board
+           model_number == 407 or # Seed Robotics XL_320_EMU
+           model_number == 404 or # Seed Robotics SEED28 actuator
+           model_number == 406 or # Seed Robotics SEED56 actuator
+           model_number == 408 or # Seed Robotics SEED44 actuator
+           model_number == 409 or # Seed Robotics SEED67 actuator
+           model_number == 410):   # Seed Robotics SEED58 actuator
+            # internal operation of Seed Robotics actuators
+            # occurs at 5V steady regardless of the voltage applied
+            voltage = 5
+        else:            
+            # default behavior for all other Dynamixel protocol devices
+            voltage = self.dxl_io.get_voltage(motor_id)
+        # END SEED ROBOTICS ADDITIONS 
         voltages = self.dxl_io.get_voltage_limits(motor_id)
         
         rospy.set_param('dynamixel/%s/%d/model_number' %(self.port_namespace, motor_id), model_number)
@@ -225,18 +240,18 @@ class SerialProxy():
                     if state:
                         motor_states.append(MotorState(**state))
                         if dynamixel_io.exception: raise dynamixel_io.exception
-                except dynamixel_io.FatalErrorCodeError, fece:
+                except dynamixel_io.FatalErrorCodeError as fece:
                     rospy.logerr(fece)
-                except dynamixel_io.NonfatalErrorCodeError, nfece:
+                except dynamixel_io.NonfatalErrorCodeError as nfece:
                     self.error_counts['non_fatal'] += 1
                     rospy.logdebug(nfece)
-                except dynamixel_io.ChecksumError, cse:
+                except dynamixel_io.ChecksumError as cse:
                     self.error_counts['checksum'] += 1
                     rospy.logdebug(cse)
-                except dynamixel_io.DroppedPacketError, dpe:
+                except dynamixel_io.DroppedPacketError as dpe:
                     self.error_counts['dropped'] += 1
                     rospy.logdebug(dpe.message)
-                except OSError, ose:
+                except OSError as ose:
                     if ose.errno != errno.EAGAIN:
                         rospy.logfatal(errno.errorcode[ose.errno])
                         rospy.signal_shutdown(errno.errorcode[ose.errno])

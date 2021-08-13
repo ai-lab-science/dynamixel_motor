@@ -283,5 +283,82 @@ DXL_MODEL_TO_PARAMS = \
            'rpm_per_tick':       0.114,
            'features':           [DXL_CURRENT_L, DXL_TORQUE_CONTROL_MODE, DXL_GOAL_ACCELERATION]
          },
+# BEGIN SEED ROBOTICS ADDITIONS
+
+# SEED Robotics Main board Model Nrs
+    400: { 'name':               'SEED_ARESBRD',
+           'encoder_resolution': 4096,                             #  Electronic board; parameter not relevant
+           'range_degrees':      360.0,                            #  Electronic board; parameter not relevant
+           'torque_per_volt':    8.4 / 12.0,                       #  Electronic board; parameter not relevant
+           'velocity_per_volt':  (45 * RPM_TO_RADSEC) / 12.0,      #  Electronic board; parameter not relevant
+           'rpm_per_tick':       0.114,
+           'features':           []
+         },
+
+    405: { 'name':               'SEED_EROSBRD',
+           'encoder_resolution': 4096,                             #  Electronic board; parameter not relevant
+           'range_degrees':      360.0,                            #  Electronic board; parameter not relevant
+           'torque_per_volt':    8.4 / 12.0,                       #  Electronic board; parameter not relevant
+           'velocity_per_volt':  (45 * RPM_TO_RADSEC) / 12.0,      #  Electronic board; parameter not relevant
+           'rpm_per_tick':       0.114,
+           'features':           []
+         },
+
+# SEED Robotics Actuator Model Nrs
+
+    407: { 'name':               'SEED_XL320EMU',
+           'encoder_resolution': 4096,
+           'range_degrees':      360.0,
+           'torque_per_volt':    0.39 / 7.4,                       #  0.39 NM @ 7.4V
+           'velocity_per_volt':  (114 * RPM_TO_RADSEC) / 7.4,      #  114 RPM @ 7.4V
+           'rpm_per_tick':       0.114,
+           'features':           []
+         },
+    404: { 'name':               'SEED28_ACTUATOR',
+           'encoder_resolution': 4096,
+           'range_degrees':      360.0,
+           'torque_per_volt':    0.18 / 5.0,                      #  0.18 NM @ 5V
+           'velocity_per_volt':  (55 * RPM_TO_RADSEC) / 5.0,      #  55 RPM @ 5V
+           'rpm_per_tick':       0.114,
+           'features':           []
+         },
+
+    406: { 'name':               'SEED56_ACTUATOR',
+           'encoder_resolution': 4096,
+           'range_degrees':      360.0,
+           'torque_per_volt':    0.55 / 5.0,                      #  0.55 NM @ 5V
+           'velocity_per_volt':  (55 * RPM_TO_RADSEC) / 5.0,      #  55 RPM @ 5V
+           'rpm_per_tick':       0.114,
+           'features':           []
+         },
+         
+    408: { 'name':               'SEED44_ACTUATOR',
+           'encoder_resolution': 4096,
+           'range_degrees':      360.0,
+           'torque_per_volt':    0.4 / 5.0,                        #  0.4 NM @ 5V
+           'velocity_per_volt':  (60 * RPM_TO_RADSEC) / 5.0,       #  60 RPM @ 5V
+           'rpm_per_tick':       0.114,
+           'features':           []
+         },    
+         
+    409: { 'name':               'SEED67_ACTUATOR',
+           'encoder_resolution': 4096,
+           'range_degrees':      360.0,
+           'torque_per_volt':    0.70 / 5.0,                       #  0.7 NM @ 5V
+           'velocity_per_volt':  (55 * RPM_TO_RADSEC) / 5.0,        #  55 RPM @ 5V
+           'rpm_per_tick':       0.114,
+           'features':           []
+         }, 
+         
+    410: { 'name':               'SEED58_ACTUATOR',
+           'encoder_resolution': 4096,
+           'range_degrees':      360.0,
+           'torque_per_volt':    0.52 / 5.0,                       #  0.52 NM @ 5V
+           'velocity_per_volt':  (55 * RPM_TO_RADSEC) / 5.0,        #  55 RPM @ 5V
+           'rpm_per_tick':       0.114,
+           'features':           []
+         },                      
+                
+# END SEED ADDITIONS
 }
 
